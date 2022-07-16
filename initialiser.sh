@@ -49,9 +49,10 @@ On_White="\033[47m"       # White
 
 # Variables ----------------------------------------------------------
 INPUT_PACKAGES_CSV=./data/packagelist.csv # input file with package name to install.
-declare -a package_list # array to store packages.
+declare -a packages_list # array to store packages.
 declare -a package_details # array to store package details.
-# declare -a PACKAGE_LIST_INSTALLED # array to store installed packages.
+declare -a packages_to_install # array to store packages to install.
+# declare -a PACKAGE_LIST_INSTALLED  # array to store installed packages.
 
 
 # Functions ----------------------------------------------------------
@@ -59,32 +60,63 @@ clear_console() {
     clear
 }
 
+check_internet_connection() {
+    if ping -c 1 google.com > /dev/null; then
+        echo -e "${Green}OK${Color_Off}"
+    else
+        echo -e "${BRed}Failed!!!${Color_Off}"
+        exit 101 # Network is unreachable
+    fi
+}
+
 
 # Main --------------------------------------------------------------
 clear_console
+# sudo apt update
+# sudo apt upgrade
 
 # Welcome message
+echo -e "${Blue}-----------------------------------------------------------------------------------------------${Color_Off}"
 echo -e "${BBlue}Welcome to the installation script for Ubuntu packages!${Color_Off}"
 echo -e "${BBlue}This script will install useful softwares in Ubuntu after a fresh install of OS.${Color_Off}"
 echo -e "${BBlue}This script will install the following packages:${Color_Off}"
+echo -e "${Blue}-----------------------------------------------------------------------------------------------${Color_Off}"
 
 # [ ! -f $INPUT_PACKAGES_CSV ] && { echo "$INPUT_PACKAGES_CSV file not found"; exit 99; }
 
+echo -ne "Checking internet connection... "
+check_internet_connection
+
 # Read package list from csv file
-echo -e "${Cyan}Importing package details...${Color_Off}"
+echo -ne "${BCyan}Importing package details... ${Color_Off}"
 
 # while read -r line; do COMMAND; done < input.file
 # The -r option passed to read command prevents backslash escapes from being interpreted.
 # Add IFS= option before read command to prevent leading/trailing whitespace from being trimmed.
 while IFS=',' read -r package_name brief recommendation # IFS is the input field separator
 do
-    package_details=($package_name $brief $recommendation)
-    package_list+=($package_details)
+    package_details=($package_name $recommendation)
+    packages_list+=($package_details)
 done < <(tail -n +2 $INPUT_PACKAGES_CSV)
 
+echo -e "${Green}Done${Color_Off}"
 
-for i in "${!package_list[@]}"
+
+echo -e "${BCyan}Creating a list of packages to be installed...${Color_Off}"
+# Sorting packages to be installed 
+for i in "${!packages_list[@]}"
 do
-    # echo $i
-    echo "${package_list[$i]}"
+    if dpkg -l ${packages_list[$i]}  &> /dev/null; then
+        echo -e "${Green}${packages_list[$i]}${Color_Off} is already installed."
+    else
+        echo -e "${Yellow}${packages_list[$i]}${Color_Off} is not installed."
+        packages_to_install+=(${packages_list[$i]})
+    fi
+done
+
+echo "-----------------------------------------------------------------------------------------------"
+echo -e "${BCyan}The following packages will be installed:${Color_Off}"
+for i in "${!packages_to_install[@]}"
+do
+    echo "${packages_to_install[$i]}"
 done
