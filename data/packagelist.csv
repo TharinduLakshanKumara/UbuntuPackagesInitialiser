@@ -1,0 +1,5 @@
+# PackageName, brief, recommendation,
+ubuntu-restricted-extras,a software package for the computer operating system Ubuntu that allows the user to install essential software which is not already included due to legal or copyright reasons,yes
+ubuntu-restricted-addons,bla bla,yes
+build-essentials,These are meta-packages that are necessary for compiling software. They include the GNU debugger g++/GNU compiler collection,yes
+gedit,text editor,yes
