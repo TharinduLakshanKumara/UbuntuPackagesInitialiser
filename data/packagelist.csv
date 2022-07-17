@@ -1,10 +1,14 @@
-# PackageName, recommendation
-man,yes
-ubuntu-restricted-extras,yes
-ubuntu-restricted-addons,yes
-build-essential,yes
-inxi,yes
-ncdu,yes
-net-tools,yes
-openssh-server,yes
-neofetch,yes
+# PackageName, DE, recommendation
+man,all,yes
+ubuntu-restricted-extras,ubuntu,yes
+ubuntu-restricted-addons,ubuntu,yes
+build-essential,all,yes
+inxi,ubuntu,yes
+ncdu,all,yes
+net-tools,all,yes
+openssh-server,all,yes
+neofetch,all,yes
+htop,all,yes
+synaptic,all,no
+evince,gnome,yes
+sqlitebrowser,ubuntu,no
