@@ -187,6 +187,7 @@ if [ "${#packages_to_install[@]}" -gt "0" ]; then # If there are packages to be 
 
     else # If there are no packages to be installed
         echo -e "${Cyan}No packages to be installed!${Color_Off}"
+        echo -e "${Yellow}Exiting${Color_Off}"
         exit 0
 fi
 echo -e "${Yellow}Exiting${Color_Off}"
