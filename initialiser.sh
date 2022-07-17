@@ -53,6 +53,8 @@ declare -a packages_list # array to store packages.
 declare -a package_details # array to store package details.
 declare -a packages_to_install # array to store packages to install.
 # declare -a PACKAGE_LIST_INSTALLED  # array to store installed packages.
+OS_NAME=$(lsb_release -si)
+OS_VERSION=$(lsb_release -sr)
 
 
 # Functions ----------------------------------------------------------
@@ -80,10 +82,13 @@ clear_console
 
 # Welcome message
 echo -e "${Blue}--------------------------------------------------------------------------------${Color_Off}"
-echo -e "${BBlue}Welcome to the installation script for Ubuntu packages!${Color_Off}"
+echo -e "${BBlue}Welcome ${BCyan}$USER ${BBlue}to the installation script for Ubuntu packages!${Color_Off}"
 echo -e "${BBlue}This script will install useful softwares in Ubuntu after a fresh install of OS.${Color_Off}"
-echo -e "${BBlue}This script will install the following packages:${Color_Off}"
 echo -e "${Blue}--------------------------------------------------------------------------------${Color_Off}"
+echo -e "${BBlue}OS: ${Cyan}${OS_NAME}${Color_Off}"
+echo -e "${BBlue}Version: ${Cyan}${OS_VERSION}${Color_Off}"
+echo
+
 
 # [ ! -f $INPUT_PACKAGES_CSV ] && { echo "$INPUT_PACKAGES_CSV file not found"; exit 99; }
 
@@ -107,6 +112,7 @@ echo -e "${Green}Done${Color_Off}"
 
 
 # Creating a package list to be installed after checking already installed packages
+echo
 echo -e "${BCyan}Creating a list of packages to be installed...${Color_Off}"
 # Sorting packages to be installed 
 for i in "${!packages_list[@]}"
