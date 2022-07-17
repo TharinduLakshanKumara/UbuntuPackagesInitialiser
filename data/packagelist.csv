@@ -1,4 +1,5 @@
-# PackageName, recommendation,
+# PackageName, recommendation
+man,yes
 ubuntu-restricted-extras,yes
 ubuntu-restricted-addons,yes
 build-essential,yes

@@ -73,17 +73,17 @@ check_internet_connection() {
 
 # Main --------------------------------------------------------------
 clear_console
-echo -e "${Yellow}Updating packages...${Color_Off}"
-sudo apt update
-echo -e "${Yellow}Upgrading...${Color_Off}"
-sudo apt upgrade
+# echo -e "${Yellow}Updating packages...${Color_Off}"
+# sudo apt update
+# echo -e "${Yellow}Upgrading...${Color_Off}"
+# sudo apt upgrade
 
 # Welcome message
-echo -e "${Blue}-----------------------------------------------------------------------------------------------${Color_Off}"
+echo -e "${Blue}--------------------------------------------------------------------------------${Color_Off}"
 echo -e "${BBlue}Welcome to the installation script for Ubuntu packages!${Color_Off}"
 echo -e "${BBlue}This script will install useful softwares in Ubuntu after a fresh install of OS.${Color_Off}"
 echo -e "${BBlue}This script will install the following packages:${Color_Off}"
-echo -e "${Blue}-----------------------------------------------------------------------------------------------${Color_Off}"
+echo -e "${Blue}--------------------------------------------------------------------------------${Color_Off}"
 
 # [ ! -f $INPUT_PACKAGES_CSV ] && { echo "$INPUT_PACKAGES_CSV file not found"; exit 99; }
 
@@ -121,13 +121,12 @@ done
 
 
 # Notifying the user about the packages to be installed
-echo "-----------------------------------------------------------------------------------------------"
+echo "-----------------------------------------"
 echo -e "${BCyan}The following packages will be installed:${Color_Off}"
 for i in "${!packages_to_install[@]}"
 do
     echo "${packages_to_install[$i]}"
 done
-
 
 # Asking user to confirm the packages to be installed 
 if [ "${#packages_to_install[@]}" -gt "0" ]; then # If there are packages to be installed
@@ -135,11 +134,13 @@ if [ "${#packages_to_install[@]}" -gt "0" ]; then # If there are packages to be 
     read -p "Do you want to install all (a) or install one by one (o) or quit (q)? [a/o/q]: " choice
 
     case $choice in
-        [a]* )
+        
+        [a]* ) # Install all packages
             echo -e "${Cyan}Installing all packages...${Color_Off}"
             sudo apt install ${packages_to_install[@]}
             ;;
-        [o]* )
+        
+        [o]* ) # Install one by one
             echo -e "${Cyan}Installing one by one...${Color_Off}"
             for i in "${!packages_to_install[@]}"
             do
@@ -165,11 +166,14 @@ if [ "${#packages_to_install[@]}" -gt "0" ]; then # If there are packages to be 
                 done
             done
             ;;
-        [q]* )
+        
+        [q]* ) # Quit
             echo -e "${Cyan}Quitting...${Color_Off}"
             exit 0
             ;;
-        * )
+
+        
+        * ) # Invalid input
             echo -e "${Cyan}Invalid choice...${Color_Off}"
             exit 1
             ;;
