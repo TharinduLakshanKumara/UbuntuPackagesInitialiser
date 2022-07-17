@@ -73,8 +73,10 @@ check_internet_connection() {
 
 # Main --------------------------------------------------------------
 clear_console
-# sudo apt update
-# sudo apt upgrade
+echo -e "${Yellow}Updating packages...${Color_Off}"
+sudo apt update
+echo -e "${Yellow}Upgrading...${Color_Off}"
+sudo apt upgrade
 
 # Welcome message
 echo -e "${Blue}-----------------------------------------------------------------------------------------------${Color_Off}"
@@ -127,42 +129,54 @@ do
 done
 
 
-# Asking user to confirm the packages to be installed
-echo "The above packages will be installed:"
-read -p "Do you want to install all (a) or install one by one (o) or quit (q)? [a/o/q]: " choice
-case $choice in
-    [a]* )
-        echo -e "${Cyan}Installing all packages...${Color_Off}"
-        sudo apt install ${packages_to_install[@]}
-        ;;
-    [o]* )
-        echo -e "${Cyan}Installing one by one...${Color_Off}"
-        for i in "${!packages_to_install[@]}"
-        do
-            while true; do
-                read -p "Do you want to install ${packages_to_install[$i]}? [y/n]: " yn
-                case $yn in
-                    [Yy]* )
-                        echo -e "${Cyan}Installing ${packages_to_install[$i]}...${Color_Off}"
-                        sudo apt install ${packages_to_install[$i]}
-                        break
-                        ;;
-                    [Nn]* )
-                        break
-                        ;;
-                    * )
-                        echo "Please answer yes or no."
-                        ;;
-                esac
+# Asking user to confirm the packages to be installed 
+if [ "${#packages_to_install[@]}" -gt "0" ]; then # If there are packages to be installed
+    echo "The above packages will be installed:"
+    read -p "Do you want to install all (a) or install one by one (o) or quit (q)? [a/o/q]: " choice
+
+    case $choice in
+        [a]* )
+            echo -e "${Cyan}Installing all packages...${Color_Off}"
+            sudo apt install ${packages_to_install[@]}
+            ;;
+        [o]* )
+            echo -e "${Cyan}Installing one by one...${Color_Off}"
+            for i in "${!packages_to_install[@]}"
+            do
+                while true; do
+                    read -p "Do you want to install ${packages_to_install[$i]}? [y/n/q]: " yn
+                    case $yn in
+                        [Yy]* )
+                            echo -e "${Cyan}Installing ${packages_to_install[$i]}...${Color_Off}"
+                            sudo apt install ${packages_to_install[$i]}
+                            break
+                            ;;
+                        [Nn]* )
+                            break
+                            ;;
+                        [Qq]* ) # Quit
+                            echo -e "${Cyan}Exiting...${Color_Off}"
+                            exit 0
+                            ;;
+                        * )
+                            echo "Please answer yes or no."
+                            ;;
+                    esac
+                done
             done
-        done
-        ;;
-    [q]* )
-        echo -e "${Cyan}Quitting...${Color_Off}"
+            ;;
+        [q]* )
+            echo -e "${Cyan}Quitting...${Color_Off}"
+            exit 0
+            ;;
+        * )
+            echo -e "${Cyan}Invalid choice...${Color_Off}"
+            exit 1
+            ;;
+    esac
+
+    else # If there are no packages to be installed
+        echo -e "${Cyan}No packages to be installed!${Color_Off}"
+        echo -e "${Yellow}Quitting${Color_Off}"
         exit 0
-        ;;
-    * )
-        echo -e "${Cyan}Invalid choice...${Color_Off}"
-        exit 1
-        ;;
-esac
+fi
