@@ -60,6 +60,7 @@ clear_console() {
     clear
 }
 
+# Check if the machine can ping google.com
 check_internet_connection() {
     if ping -c 1 google.com > /dev/null; then
         echo -e "${Green}OK${Color_Off}"
@@ -68,8 +69,6 @@ check_internet_connection() {
         exit 101 # Network is unreachable
     fi
 }
-
-# User s
 
 
 # Main --------------------------------------------------------------
@@ -89,6 +88,7 @@ echo -e "${Blue}----------------------------------------------------------------
 echo -ne "Checking internet connection... "
 check_internet_connection
 
+
 # Read package list from csv file
 echo -ne "${BCyan}Importing package details... ${Color_Off}"
 
@@ -103,6 +103,7 @@ done < <(tail -n +2 $INPUT_PACKAGES_CSV) # Ignoring the header is csv file
 
 echo -e "${Green}Done${Color_Off}"
 
+
 # Creating a package list to be installed after checking already installed packages
 echo -e "${BCyan}Creating a list of packages to be installed...${Color_Off}"
 # Sorting packages to be installed 
@@ -116,9 +117,52 @@ do
     fi
 done
 
+
+# Notifying the user about the packages to be installed
 echo "-----------------------------------------------------------------------------------------------"
 echo -e "${BCyan}The following packages will be installed:${Color_Off}"
 for i in "${!packages_to_install[@]}"
 do
     echo "${packages_to_install[$i]}"
 done
+
+
+# Asking user to confirm the packages to be installed
+echo "The above packages will be installed:"
+read -p "Do you want to install all (a) or install one by one (o) or quit (q)? [a/o/q]: " choice
+case $choice in
+    [a]* )
+        echo -e "${Cyan}Installing all packages...${Color_Off}"
+        sudo apt install ${packages_to_install[@]}
+        ;;
+    [o]* )
+        echo -e "${Cyan}Installing one by one...${Color_Off}"
+        for i in "${!packages_to_install[@]}"
+        do
+            while true; do
+                read -p "Do you want to install ${packages_to_install[$i]}? [y/n]: " yn
+                case $yn in
+                    [Yy]* )
+                        echo -e "${Cyan}Installing ${packages_to_install[$i]}...${Color_Off}"
+                        sudo apt install ${packages_to_install[$i]}
+                        break
+                        ;;
+                    [Nn]* )
+                        break
+                        ;;
+                    * )
+                        echo "Please answer yes or no."
+                        ;;
+                esac
+            done
+        done
+        ;;
+    [q]* )
+        echo -e "${Cyan}Quitting...${Color_Off}"
+        exit 0
+        ;;
+    * )
+        echo -e "${Cyan}Invalid choice...${Color_Off}"
+        exit 1
+        ;;
+esac
