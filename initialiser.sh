@@ -69,6 +69,8 @@ check_internet_connection() {
     fi
 }
 
+# User s
+
 
 # Main --------------------------------------------------------------
 clear_console
@@ -93,24 +95,24 @@ echo -ne "${BCyan}Importing package details... ${Color_Off}"
 # while read -r line; do COMMAND; done < input.file
 # The -r option passed to read command prevents backslash escapes from being interpreted.
 # Add IFS= option before read command to prevent leading/trailing whitespace from being trimmed.
-while IFS=',' read -r package_name brief recommendation # IFS is the input field separator
+while IFS=',' read -r package_name recommendation # IFS is the input field separator
 do
-    package_details=($package_name $recommendation)
-    packages_list+=($package_details)
-done < <(tail -n +2 $INPUT_PACKAGES_CSV)
+    package_details=("$package_name" "$recommendation")
+    packages_list+=("${package_details}") # only the package_name is passed as multidimensional arrays are not supported by bash
+done < <(tail -n +2 $INPUT_PACKAGES_CSV) # Ignoring the header is csv file
 
 echo -e "${Green}Done${Color_Off}"
 
-
+# Creating a package list to be installed after checking already installed packages
 echo -e "${BCyan}Creating a list of packages to be installed...${Color_Off}"
 # Sorting packages to be installed 
 for i in "${!packages_list[@]}"
 do
-    if dpkg -l ${packages_list[$i]}  &> /dev/null; then
+    if dpkg -l "${packages_list[$i]}"  &> /dev/null; then
         echo -e "${Green}${packages_list[$i]}${Color_Off} is already installed."
     else
         echo -e "${Yellow}${packages_list[$i]}${Color_Off} is not installed."
-        packages_to_install+=(${packages_list[$i]})
+        packages_to_install+=("${packages_list[$i]}")
     fi
 done
 
